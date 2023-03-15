@@ -1,0 +1,371 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Kendo.Mvc
+@using Kendo.Mvc.UI
+@using Kendo.Mvc
+@model IEnumerable<Users.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1></h1>
+
+<div id="UsersList" >
+<p>
+
+        <button type="button" FillMode="Outline" OnClick="AddNewUserPopup(this.id,this.value);">Add </button>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                First Name </br> Last Name
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)  @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td> 
+                    @if ((item.Spouse) != null)
+                    {
+                    <select name="MaritalStatus" id=@("MaritalStatus"+ item.Id.ToString()) disabled="true" data-val="true">
+                        <option value="@Html.DisplayFor(modelItem => item.Spouse)">@Html.DisplayFor(modelItem => item.Spouse)</option>
+                    </select>
+                    }
+                    else
+                    {
+
+                        @Html.DropDownListFor(modelItem => item.IsMarried
+                        , new SelectListItem[]
+                        {
+                            new SelectListItem() {
+                            Text = "", Value = "empty"
+                            },
+                            new SelectListItem() {
+                            Text = "Single", Value = "false"
+                            },
+                            new SelectListItem() {
+                            Text = "Married", Value = "true"
+                            },
+
+                        },
+                        new
+                        {
+                            id = "MaritalStatus" + @item.Id.ToString(),
+                            onchange = "OpenMaritalStatusPopup(this.id,this.value);"
+                        })
+                    }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+</div>
+
+
+
+<div id="PotentialSpouses" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Spouse</h4>
+            </div>
+            <div class="modal-body">
+                
+               <input type="text" id="spouses" name="spouse" />
+                <input type="hidden" id="marrieduserid" name="marrieduserid" />
+                <br>
+                <br>
+                <button type="button" FillMode="Outline" OnClick="ClosePotentialSpousesPopup(this.id,this.value);">Cancel</button>
+                <button type="button" FillMode="Outline" OnClick="SaveSpouse(this.id,this.value);">Save</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="AddNewUser" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Person</h4>
+            </div>
+            <div class="modal-body">
+                <div><label style="width: 30%" >First Name:</label>
+                    <input type="text" id="firstname" name="firstname" style="width:60%;" /><br>
+                </div>
+                <div><label style="width: 30%">Last Name:</label>
+                    <input type="text" id="lastname" name="lastname" style="width:60%; " /><br>
+                </div>
+                <label style="width: 30%">Birth Date:</label>
+                <input id="addpersonbirthdate" value="05/03/2023" title="addpersonbirthdate" style="width:60%;"/><br>
+
+
+                <table id="phonenumberlist" >
+                    <tbody>
+                        <tr id="phonenumberrow1">
+                            <td style="width: 27%;">
+                                <label >Phone Number(s):</label>
+                            </td>
+                            <td style="width: 55%">
+                                <input type="text" class="phonenumber" style="width:99%; float:left"/>
+                            </td>
+                            <td style="width: 5%">
+                                <button type="button" id="phonenumber1" FillMode="Outline" OnClick="AddNewPhoneNumberField(this.id,this.value);" style="width:30px; float:right">+</button>
+                            </td>
+                        </tr>
+                        <tr id="phonenumberrow2">
+                            <td style="width: 27%;">
+                                <label ></label>
+                            </td>
+                            <td style="width: 55%">
+                                <input type="text" class="phonenumber" style="width:99%" />
+                            </td>
+                            <td style="width: 5%">
+                                <button type="button" id="phonenumber2" FillMode="Outline" OnClick="RemoveNewPhoneNumberField(this.id,this.value);" style="width:30px; float:right">-</button>
+                            </td>                        
+                        </tr>
+
+                    </tbody>
+                </table><br><br>
+
+
+                <fieldset style="border: solid; border-width: thin; border-color: #a8a8a8; width:auto">
+                    <legend>Address</legend>
+
+                    
+                    <input type="text" class="address" id="address1" style="width:60%; float:left">
+                    <input type="radio" id="address1" name="address" value="address1" >
+                    <label for="address1">primary</label>
+                    <br>
+
+                    <input type="text" class="address" id="address2" style="width:60%; float:left">
+                    <input type="radio" id="address2" name="address" value="address2">
+                    <label for="address2">primary</label>
+                    <br>
+
+                    <input type="text" class="address" id="address3" style="width:60%; float:left">
+                    <input type="radio" id="address3" name="address" value="address3">
+                    <label for="address3" >primary</label>
+                    
+                </fieldset><br><br>
+
+                <button type="button" FillMode="Outline" OnClick="CloseNewUserPopup(this.id,this.value);">Cancel</button>
+                <button type="button" FillMode="Outline" OnClick="AddNewUser(this.id,this.value);">Save</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div id="SingleDummyPopup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Single Dummy Popup</h4>
+            </div>
+            <div class="modal-body">
+
+                :-)
+                </br>
+                </br>
+                <button type="button" FillMode="Outline" OnClick="CloseSingleDummyPopup(this.id,this.value);">Cancel</button>
+                <button type="button" FillMode="Outline" OnClick="EditUserIsSingle(this.id,this.value);">Save</button>
+                <input type="hidden" id="singleDummyPopupuserid" />
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function OpenMaritalStatusPopup(id, value) {
+        if (value == "true")
+        {
+            $('#PotentialSpouses').modal('show');
+            document.getElementById('marrieduserid').value = id.replace("MaritalStatus", "");;
+        }
+        else if (value == "false") 
+        {
+            $('#SingleDummyPopup').modal('show');
+            document.getElementById('singleDummyPopupuserid').value = id.replace("MaritalStatus","");
+        }
+    }
+
+
+    function CloseSingleDummyPopup(id, value) {
+
+        $('#SingleDummyPopup').modal('hide');
+    }
+
+    function CloseNewUserPopup(id, value) {
+
+        $('#AddNewUser').modal('hide');
+    }
+
+    function ClosePotentialSpousesPopup(id, value) {
+
+        $('#PotentialSpouses').modal('hide');
+    }
+
+
+    function AddNewUserPopup(id, value) {
+
+        $('#AddNewUser').modal('show');
+    }
+
+
+    function EditUserIsSingle(id, value) {
+        
+        var userid = document.getElementById('singleDummyPopupuserid').value;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("EditUserIsSingle","UsersList")',
+            data:  {id: userid},
+            success: function (data) {
+                $('#SingleDummyPopup').modal('hide'); 
+                window.location.reload(true);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText + thrownError + this.url + this.data);
+
+            }
+        });
+    }
+
+    function SaveSpouse(id, value) {
+
+        var spouse = document.getElementById('spouses').value;
+        var userid = document.getElementById('marrieduserid').value;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveSpouse","UsersList")',
+            data: {
+                id: userid,
+                spouse: spouse
+            },
+            success: function (data) {
+                $('#PotentialSpouses').modal('hide');
+                window.location.reload(true);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText + thrownError + this.url + this.data);
+
+            }
+        });
+    }
+
+
+    function AddNewUser(id, value) {
+
+        var firstname = document.getElementById('firstname').value;
+        var lastname = document.getElementById('lastname').value;
+        var birthdate = document.getElementById('addpersonbirthdate').value;
+
+        const phonenumbers=[];
+        $(".phonenumber").each(function () {
+            phonenumbers.push($(this).val());
+        });
+
+        const addresses = [];
+        $(".address").each(function () {
+            addresses.push($(this).val());
+        });
+
+        var primaryaddress = "";
+        var primaryaddressfieldid = $("input[type='radio'][name='address']:checked").val();
+        primaryaddress = $("input[type='text'][id='" + primaryaddressfieldid + "']").val();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Create","UsersList")',
+            data: {
+                firstname : firstname,
+                lastname : lastname,
+                birthdate : birthdate,
+                phonenumbers : phonenumbers,
+                addresses : addresses,
+                primaryaddress : primaryaddress
+            },
+            success: function (data) {
+                $('#AddNewUserPopup').modal('hide');
+                window.location.reload(true);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText + thrownError + this.url + this.data);
+
+            }
+        });
+    }
+
+    function RemoveNewPhoneNumberField(id, value) {
+        $('table#phonenumberlist tbody tr#phonenumberrow' + id.replace("phonenumber", "")).remove();
+    }
+
+    function AddNewPhoneNumberField(id, value) {
+
+        var rowid = parseInt($('#phonenumberlist tr').last().attr('id').replace("phonenumberrow", "")) + 1;
+        $('#phonenumberlist tbody').append($(
+            '<tr id="phonenumberrow' + rowid + '">' +
+            '<td style="width: 27%;"><label ></label></td>' +
+            '<td style="width: 55%">' +
+            '<input type="text" class="phonenumber" style="width:99%" /></td><td style="width: 5%">' +
+            '<button type="button" id="phonenumber' + rowid + '" FillMode="Outline" OnClick="RemoveNewPhoneNumberField(this.id,this.value);" style="width:30px; float:right">-</button>' +
+            '</td> ' +
+            '</tr>'
+        ));
+    }
+
+    $(document).ready(function () {
+        $("#addpersonbirthdate").kendoDatePicker({
+            format: "MM/dd/yyyy",
+            disableDates: function (date) {
+                if (date > new Date()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        });
+
+
+        var PotentialSpouses = []
+        @foreach (var item in Model)
+        {
+            @:PotentialSpouses.push('@item.FirstName @item.LastName (@item.Age)');
+        }
+
+        $("#spouses").kendoAutoComplete({
+            dataSource: PotentialSpouses,
+            filter: "startswith"
+        });
+
+    });
+</script>
+
+
+
